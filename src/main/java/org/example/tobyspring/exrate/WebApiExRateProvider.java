@@ -1,31 +1,23 @@
 package org.example.tobyspring.exrate;
 
+import org.example.tobyspring.api.ApiTemplate;
 import org.example.tobyspring.payment.ExRateProvider;
-import tools.jackson.databind.ObjectMapper;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.stream.Collectors;
 
 public class WebApiExRateProvider implements ExRateProvider {
+    private final ApiTemplate apiTemplate;
+
+    public WebApiExRateProvider(ApiTemplate apiTemplate) {
+        this.apiTemplate = apiTemplate;
+    }
 
     @Override
-    public BigDecimal getExRate(String currency) throws IOException {
-        URL url = new URL("https://open.er-api.com/v6/latest/" + currency);
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String response = br.lines().collect(Collectors.joining());
-        br.close();
+    public BigDecimal getExRate(String currency) {
+        String url = "https://open.er-api.com/v6/latest/" + currency;
 
-        ObjectMapper mapper = new ObjectMapper();
-        ExRateData data = mapper.readValue(response, ExRateData.class);
-
-        System.out.println("API ExRate: " + data.rates().get("KRW"));
-
-        return data.rates().get("KRW");
+        // 콜백을 만들어 템플릿 메소드를 호출
+        return apiTemplate.getExRate(url); // 콜백
     }
+
 }

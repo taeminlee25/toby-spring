@@ -10,7 +10,7 @@ description = 'toby-spring'
 
 java {
 	toolchain {
-		languageVersion = JavaLanguageVersion.of(17)
+		languageVersion = JavaLanguageVersion.of(21)
 	}
 }
 
@@ -19,8 +19,26 @@ repositories {
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter'
-	implementation 'org.springframework.boot:spring-boot-starter-json'
+	implementation('org.springframework.boot:spring-boot-starter-json') {
+		exclude group: 'tools.jackson.core'
+	}
+	implementation('org.springframework.boot:spring-boot-starter') {
+		exclude group: 'tools.jackson.core'
+	}
+	implementation('org.springframework.boot:spring-boot-starter-web') {
+		exclude group: 'tools.jackson.core'
+	}
+	implementation('org.springframework.boot:spring-boot-starter-data-jpa') {
+		exclude group: 'tools.jackson.core'
+	}
+
+	runtimeOnly 'com.h2database:h2'
+
+	// 2. 체크 예외(JsonProcessingException)가 강제되는 Jackson 2.x 버전을 직접 주입합니다.
+	implementation 'com.fasterxml.jackson.core:jackson-databind:2.18.2'
+	implementation 'com.fasterxml.jackson.core:jackson-core:2.18.2'
+	implementation 'com.fasterxml.jackson.core:jackson-annotations:2.18.2'
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
@@ -28,3 +46,8 @@ dependencies {
 tasks.named('test') {
 	useJUnitPlatform()
 }
+
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+}
+

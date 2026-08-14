@@ -10,11 +10,11 @@ import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
 
 public class Client {
-    public static void main(String[] args) throws IOException, InterruptedException {
-        BeanFactory beanFactory = new AnnotationConfigApplicationContext(ObjectFactory.class); // 설정 정보
+    public static void main(String[] args) throws InterruptedException {
+        BeanFactory beanFactory = new AnnotationConfigApplicationContext(PaymentConfig.class); // 설정 정보
         PaymentService paymentService = beanFactory.getBean(PaymentService.class);
 
-        Payment payment1 = paymentService.prepare(100L, "USD", BigDecimal.valueOf(50.7));
-        System.out.println(payment1);
+        Payment payment = paymentService.prepare(100L, "USD", BigDecimal.valueOf(50.7));
+        System.out.println("Payment: " + payment);
     }
 }
